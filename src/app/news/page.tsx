@@ -18,16 +18,10 @@ import type { Campaign } from "@/types";
 export default function NewsPage() {
   const { user, loading } = useUser();
   const [dismissedWarning, setDismissedWarning] = useState(false);
-  const [activeTab, setActiveTab] = useState<"all" | string>("all");
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   const showWarning = !loading && !user && !dismissedWarning;
-
-  const filteredArticles =
-    activeTab === "all"
-      ? articles
-      : articles.filter((a) => a.campaign_id === activeTab);
 
   return (
     <>
@@ -117,41 +111,14 @@ export default function NewsPage() {
               Bài viết
             </h2>
 
-            {/* Filter tabs */}
-            <div className="mb-6 flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-              <button
-                onClick={() => setActiveTab("all")}
-                className={`shrink-0 rounded-full px-5 py-2 text-sm font-medium transition-all ${
-                  activeTab === "all"
-                    ? "bg-forest text-white shadow-md"
-                    : "bg-white text-gray-500 hover:bg-gray-50"
-                }`}
-              >
-                Tất cả
-              </button>
-              {campaigns.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setActiveTab(c.id)}
-                  className={`shrink-0 rounded-full px-5 py-2 text-sm font-medium transition-all ${
-                    activeTab === c.id
-                      ? "bg-forest text-white shadow-md"
-                      : "bg-white text-gray-500 hover:bg-gray-50"
-                  }`}
-                >
-                  {c.title}
-                </button>
-              ))}
-            </div>
-
             {/* Articles grid */}
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredArticles.map((article, i) => (
+              {articles.map((article, i) => (
                 <ArticleCard key={article.id} article={article} index={i} />
               ))}
             </div>
 
-            {filteredArticles.length === 0 && (
+            {articles.length === 0 && (
               <div className="py-16 text-center">
                 <p className="text-4xl">📰</p>
                 <p className="mt-3 text-gray-400">Chưa có bài viết nào</p>

@@ -61,7 +61,7 @@ export default function ArticleCard({
 
           {/* Drop reward */}
           <div className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-gold/90 px-2.5 py-1 text-[10px] font-bold text-forest-dark">
-            +5 💧
+            +1💧/phút
           </div>
         </div>
 

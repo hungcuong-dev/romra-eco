@@ -13,8 +13,8 @@ const steps = [
   {
     icon: "📰",
     title: "Đọc bài viết",
-    desc: "Mỗi bài viết bạn đọc hết sẽ nhận được 5 giọt nước. Kiến thức + đóng góp!",
-    bonus: "Đọc tối thiểu 60 giây để nhận thưởng",
+    desc: "Cứ mỗi 1 phút đọc bài, bạn nhận được 1 giọt nước. Tổng thời gian đọc tích lũy qua tất cả bài viết trong ngày.",
+    bonus: "Tối đa 5 giọt/ngày · Reset mỗi ngày mới",
   },
   {
     icon: "💧",

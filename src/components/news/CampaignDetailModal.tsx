@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Campaign } from "@/types";
-import { articles } from "@/data/campaigns";
 
 export default function CampaignDetailModal({
   campaign,
@@ -34,9 +33,6 @@ export default function CampaignDetailModal({
   const progress = Math.min(
     (campaign.current_amount / campaign.target_amount) * 100,
     100
-  );
-  const relatedArticles = articles.filter(
-    (a) => a.campaign_id === campaign.id
   );
 
   return (
@@ -130,7 +126,7 @@ export default function CampaignDetailModal({
             </div>
 
             {/* Stats */}
-            <div className="mb-5 grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-cream p-3 text-center">
                 <p className="text-lg font-bold text-gold">
                   1💧
@@ -140,57 +136,16 @@ export default function CampaignDetailModal({
                 </p>
               </div>
               <div className="rounded-xl bg-cream p-3 text-center">
-                <p className="text-lg font-bold text-forest">
-                  {relatedArticles.length}
-                </p>
-                <p className="mt-0.5 text-[10px] text-gray-400">
-                  bài viết
-                </p>
-              </div>
-              <div className="rounded-xl bg-cream p-3 text-center">
                 <p className="text-lg font-bold text-forest-dark">
                   {Math.floor(
                     campaign.current_amount / campaign.drop_value_vnd
                   ).toLocaleString("vi-VN")}
                 </p>
                 <p className="mt-0.5 text-[10px] text-gray-400">
-                  giọt nước
+                  giọt nước đã quyên góp
                 </p>
               </div>
             </div>
-
-            {/* Related articles */}
-            {relatedArticles.length > 0 && (
-              <div>
-                <h3 className="mb-3 text-sm font-bold text-forest-dark">
-                  Bài viết liên quan
-                </h3>
-                <div className="space-y-2">
-                  {relatedArticles.slice(0, 3).map((article) => (
-                    <a
-                      key={article.id}
-                      href={`/news/${article.slug}`}
-                      className="flex items-center gap-3 rounded-xl bg-cream p-3 transition-colors hover:bg-gray-100"
-                    >
-                      <img
-                        src={article.cover_image}
-                        alt={article.title}
-                        referrerPolicy="no-referrer"
-                        className="h-12 w-12 shrink-0 rounded-lg object-cover"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-semibold text-forest-dark">
-                          {article.title}
-                        </p>
-                        <p className="mt-0.5 text-[10px] text-gray-400">
-                          {article.read_time_minutes} phút đọc · +5 💧
-                        </p>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </motion.div>
       </motion.div>

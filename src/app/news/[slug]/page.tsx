@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import Header from "@/components/shared/Header";
 import ReadingTimer from "@/components/news/ReadingTimer";
 import DropsBubble from "@/components/news/DropsBubble";
-import { articles, campaigns } from "@/data/campaigns";
+import { articles } from "@/data/campaigns";
 
 export default function ArticlePage() {
   const params = useParams();
@@ -34,7 +34,6 @@ export default function ArticlePage() {
     );
   }
 
-  const campaign = campaigns.find((c) => c.id === article.campaign_id);
   const articleUrl = article.url || "";
 
   return (
@@ -63,11 +62,9 @@ export default function ArticlePage() {
                 {article.title}
               </h1>
               <div className="flex items-center gap-2 text-xs text-gray-400">
-                {campaign && <span>{campaign.title}</span>}
-                <span>·</span>
                 <span>{article.read_time_minutes} phút đọc</span>
                 <span>·</span>
-                <span className="text-gold font-medium">+5 💧</span>
+                <span className="text-gold font-medium">+1💧/phút</span>
               </div>
             </div>
 
