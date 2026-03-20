@@ -16,10 +16,23 @@ export async function getProfile(userId: string): Promise<UserProfile | null> {
     .from("user_profiles")
     .select("*")
     .eq("id", userId)
-    .single();
+    .maybeSingle();
 
-  if (error || !data) return null;
-  return data as UserProfile;
+  if (data) return data as UserProfile;
+
+  // Profile doesn't exist yet — create it
+  if (error?.code === "PGRST116" || !data) {
+    const { data: newProfile, error: insertError } = await supabase()
+      .from("user_profiles")
+      .upsert({ id: userId, total_drops: 0, streak_count: 0 })
+      .select()
+      .single();
+
+    if (insertError || !newProfile) return null;
+    return newProfile as UserProfile;
+  }
+
+  return null;
 }
 
 export async function addDrops(userId: string, amount: number): Promise<number> {
