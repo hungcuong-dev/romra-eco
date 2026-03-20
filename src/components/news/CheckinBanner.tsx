@@ -3,44 +3,31 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/components/auth/AuthProvider";
-import { doCheckin, getProfile } from "@/lib/drops";
+import { useDrops } from "@/components/drops/DropsProvider";
+import { doCheckin } from "@/lib/drops";
 
 export default function CheckinBanner() {
   const { user } = useUser();
+  const { streak, lastCheckin, loaded, addDropsLocal, setStreakLocal } = useDrops();
   const [checkedIn, setCheckedIn] = useState(false);
-  const [streak, setStreak] = useState(0);
   const [drops, setDrops] = useState(0);
   const [showReward, setShowReward] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
 
-  // Load checkin state from DB
+  const today = new Date().toISOString().split("T")[0];
+
   useEffect(() => {
-    if (!user) return;
-
-    (async () => {
-      const profile = await getProfile(user.id);
-      if (profile) {
-        const today = new Date().toISOString().split("T")[0];
-        if (profile.last_checkin === today) {
-          setCheckedIn(true);
-          setStreak(profile.streak_count);
-
-          // Calculate drops that were earned
-          let multiplier = 1;
-          if (profile.streak_count >= 30) multiplier = 3;
-          else if (profile.streak_count >= 7) multiplier = 2;
-          else if (profile.streak_count >= 3) multiplier = 1.5;
-          setDrops(Math.floor(1 * multiplier));
-        } else {
-          // Show current streak for display
-          const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-          setStreak(profile.last_checkin === yesterday ? profile.streak_count : 0);
-        }
-      }
-      setLoading(false);
-    })();
-  }, [user]);
+    if (!loaded) return;
+    if (lastCheckin === today) {
+      setCheckedIn(true);
+      // Calculate what was earned
+      let multiplier = 1;
+      if (streak >= 30) multiplier = 3;
+      else if (streak >= 7) multiplier = 2;
+      else if (streak >= 3) multiplier = 1.5;
+      setDrops(Math.floor(1 * multiplier));
+    }
+  }, [loaded, lastCheckin, streak, today]);
 
   const getMultiplier = (s: number) => {
     if (s >= 30) return 3;
@@ -57,30 +44,30 @@ export default function CheckinBanner() {
 
     if (result.success && !result.alreadyCheckedIn) {
       setCheckedIn(true);
-      setStreak(result.streak);
       setDrops(result.drops);
+      // Update shared state immediately
+      addDropsLocal(result.drops);
+      setStreakLocal(result.streak, today);
+
       setShowReward(true);
       setTimeout(() => setShowReward(false), 3000);
     } else if (result.alreadyCheckedIn) {
       setCheckedIn(true);
-      setStreak(result.streak);
     }
 
     setChecking(false);
   };
 
-  if (!user || loading) return null;
+  if (!user || !loaded) return null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-forest-dark via-forest to-forest-dark p-6 sm:p-8">
-      {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white" />
         <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-white" />
       </div>
 
       <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
-        {/* Left — icon + streak */}
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-3xl sm:h-20 sm:w-20 sm:text-4xl">
             {checkedIn ? "✅" : "💧"}
@@ -97,9 +84,7 @@ export default function CheckinBanner() {
           </div>
         </div>
 
-        {/* Right — streak + button */}
         <div className="flex items-center gap-4 sm:ml-auto">
-          {/* Streak */}
           {streak > 0 && (
             <div className="rounded-xl bg-white/10 px-4 py-2 text-center">
               <p className="text-2xl font-black text-gold">{streak}</p>
@@ -110,7 +95,6 @@ export default function CheckinBanner() {
             </div>
           )}
 
-          {/* Button */}
           {!checkedIn && (
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -125,7 +109,6 @@ export default function CheckinBanner() {
         </div>
       </div>
 
-      {/* Reward animation */}
       <AnimatePresence>
         {showReward && (
           <motion.div

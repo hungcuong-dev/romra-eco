@@ -1,42 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/components/auth/AuthProvider";
-import { getProfile } from "@/lib/drops";
+import { useDrops } from "@/components/drops/DropsProvider";
 
 export default function DropsBubble() {
   const { user } = useUser();
+  const { totalDrops, streak, loaded } = useDrops();
   const [expanded, setExpanded] = useState(false);
-  const [totalDrops, setTotalDrops] = useState(0);
-  const [streak, setStreak] = useState(0);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    if (!user) return;
-
-    (async () => {
-      const profile = await getProfile(user.id);
-      if (profile) {
-        setTotalDrops(profile.total_drops);
-        setStreak(profile.streak_count);
-      }
-      setLoaded(true);
-    })();
-  }, [user]);
-
-  // Refresh periodically (every 30s) to catch updates from other components
-  useEffect(() => {
-    if (!user) return;
-    const interval = setInterval(async () => {
-      const profile = await getProfile(user.id);
-      if (profile) {
-        setTotalDrops(profile.total_drops);
-        setStreak(profile.streak_count);
-      }
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [user]);
 
   if (!user || !loaded) return null;
 
@@ -79,7 +51,6 @@ export default function DropsBubble() {
         )}
       </AnimatePresence>
 
-      {/* Bubble button */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

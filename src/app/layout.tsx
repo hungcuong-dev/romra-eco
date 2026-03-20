@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/auth/AuthProvider";
+import DropsProvider from "@/components/drops/DropsProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,7 +33,9 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <DropsProvider>{children}</DropsProvider>
+        </AuthProvider>
       </body>
     </html>
   );

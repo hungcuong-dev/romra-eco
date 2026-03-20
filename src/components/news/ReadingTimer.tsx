@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/components/auth/AuthProvider";
+import { useDrops } from "@/components/drops/DropsProvider";
 import { addDrops, getReadingState, saveReadingLocal } from "@/lib/drops";
 import Link from "next/link";
 
@@ -11,6 +12,7 @@ const MAX_DROPS_PER_DAY = 5;
 
 export default function ReadingTimer() {
   const { user } = useUser();
+  const { addDropsLocal } = useDrops();
   const [seconds, setSeconds] = useState(0);
   const [dropsEarned, setDropsEarned] = useState(0);
   const [active, setActive] = useState(true);
@@ -70,8 +72,9 @@ export default function ReadingTimer() {
           setShowReward(true);
           setTimeout(() => setShowReward(false), 2500);
 
-          // Save drops to DB
+          // Save drops to DB + update shared state
           addDrops(user.id, earned);
+          addDropsLocal(earned);
 
           saveReadingLocal(user.id, next, newDrops);
         }
