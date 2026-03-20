@@ -12,14 +12,14 @@ const statuses: FieldStatus[] = ["collected", "available", "burn_risk"];
 
 export default function MapFilters({ activeFilters, onToggle }: MapFiltersProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex gap-1.5 md:gap-2">
       {statuses.map((status) => {
         const isActive = activeFilters.includes(status);
         return (
           <button
             key={status}
             onClick={() => onToggle(status)}
-            className={`flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-medium transition-all ${
+            className={`flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5 text-xs font-medium transition-all md:gap-2 md:px-4 md:py-2 md:text-sm ${
               isActive
                 ? "border-transparent text-white shadow-md"
                 : "border-gray-300 bg-white text-gray-500"

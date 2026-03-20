@@ -275,7 +275,7 @@ export default function MapView({
       {/* Map style toggle */}
       <button
         onClick={() => setSatellite((s) => !s)}
-        className="absolute bottom-20 right-4 z-10 flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-forest-dark shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
+        className="absolute bottom-28 right-4 z-10 flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-medium text-forest-dark shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl md:bottom-20 md:px-4 md:py-2.5 md:text-sm"
       >
         {satellite ? (
           <>
@@ -299,7 +299,7 @@ export default function MapView({
       <button
         onClick={handleFindNearMe}
         disabled={locating}
-        className="absolute bottom-6 right-4 z-10 flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-forest-dark shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-60"
+        className="absolute bottom-16 right-4 z-10 flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-medium text-forest-dark shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-60 md:bottom-6 md:px-5 md:py-2.5 md:text-sm"
       >
         {locating ? (
           <>
