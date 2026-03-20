@@ -1,18 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/components/auth/AuthProvider";
+import { getProfile } from "@/lib/drops";
 
 export default function DropsBubble() {
   const { user } = useUser();
   const [expanded, setExpanded] = useState(false);
+  const [totalDrops, setTotalDrops] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
-  if (!user) return null;
+  useEffect(() => {
+    if (!user) return;
 
-  // Get drops from localStorage for now
-  const totalDrops = parseInt(localStorage.getItem(`totalDrops_${user.id}`) || "0");
-  const streak = parseInt(localStorage.getItem(`streak_${user.id}`) || "0");
+    (async () => {
+      const profile = await getProfile(user.id);
+      if (profile) {
+        setTotalDrops(profile.total_drops);
+        setStreak(profile.streak_count);
+      }
+      setLoaded(true);
+    })();
+  }, [user]);
+
+  // Refresh periodically (every 30s) to catch updates from other components
+  useEffect(() => {
+    if (!user) return;
+    const interval = setInterval(async () => {
+      const profile = await getProfile(user.id);
+      if (profile) {
+        setTotalDrops(profile.total_drops);
+        setStreak(profile.streak_count);
+      }
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
+
+  if (!user || !loaded) return null;
 
   return (
     <div className="fixed bottom-20 right-4 z-50 sm:bottom-6 sm:right-6">

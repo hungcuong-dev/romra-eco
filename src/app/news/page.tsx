@@ -7,6 +7,7 @@ import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
 import CampaignBanner from "@/components/news/CampaignBanner";
 import CampaignDetailModal from "@/components/news/CampaignDetailModal";
+import DonateModal from "@/components/news/DonateModal";
 import HowItWorksModal from "@/components/news/HowItWorksModal";
 import ArticleCard from "@/components/news/ArticleCard";
 import CheckinBanner from "@/components/news/CheckinBanner";
@@ -19,6 +20,7 @@ export default function NewsPage() {
   const { user, loading } = useUser();
   const [dismissedWarning, setDismissedWarning] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  const [donateCampaign, setDonateCampaign] = useState<Campaign | null>(null);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   const showWarning = !loading && !user && !dismissedWarning;
@@ -177,6 +179,17 @@ export default function NewsPage() {
       <CampaignDetailModal
         campaign={selectedCampaign}
         onClose={() => setSelectedCampaign(null)}
+        onDonate={(c) => {
+          setSelectedCampaign(null);
+          setDonateCampaign(c);
+        }}
+      />
+
+      {/* Donate modal */}
+      <DonateModal
+        campaignTitle={donateCampaign?.title || ""}
+        open={!!donateCampaign}
+        onClose={() => setDonateCampaign(null)}
       />
 
       {/* How it works modal */}

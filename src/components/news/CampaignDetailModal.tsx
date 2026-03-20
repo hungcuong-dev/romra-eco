@@ -8,9 +8,11 @@ import type { Campaign } from "@/types";
 export default function CampaignDetailModal({
   campaign,
   onClose,
+  onDonate,
 }: {
   campaign: Campaign | null;
   onClose: () => void;
+  onDonate?: (campaign: Campaign) => void;
 }) {
   useEffect(() => {
     if (!campaign) return;
@@ -126,7 +128,7 @@ export default function CampaignDetailModal({
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="mb-5 grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-cream p-3 text-center">
                 <p className="text-lg font-bold text-gold">
                   1💧
@@ -146,6 +148,14 @@ export default function CampaignDetailModal({
                 </p>
               </div>
             </div>
+
+            {/* Donate button */}
+            <button
+              onClick={() => onDonate?.(campaign)}
+              className="w-full rounded-xl bg-gold py-3.5 text-sm font-bold text-forest-dark transition-all hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              Đóng góp ngay
+            </button>
           </div>
         </motion.div>
       </motion.div>

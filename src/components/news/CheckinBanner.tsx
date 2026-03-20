@@ -3,33 +3,43 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/components/auth/AuthProvider";
+import { doCheckin, getProfile } from "@/lib/drops";
 
 export default function CheckinBanner() {
   const { user } = useUser();
   const [checkedIn, setCheckedIn] = useState(false);
   const [streak, setStreak] = useState(0);
-  const [showReward, setShowReward] = useState(false);
   const [drops, setDrops] = useState(0);
+  const [showReward, setShowReward] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [checking, setChecking] = useState(false);
 
+  // Load checkin state from DB
   useEffect(() => {
     if (!user) return;
-    const today = new Date().toISOString().split("T")[0];
-    const lastCheckin = localStorage.getItem(`checkin_${user.id}`);
-    const savedStreak = parseInt(localStorage.getItem(`streak_${user.id}`) || "0");
 
-    if (lastCheckin === today) {
-      setCheckedIn(true);
-      setStreak(savedStreak);
-      setDrops(getDrops(savedStreak));
-    } else {
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-      if (lastCheckin === yesterday) {
-        setStreak(savedStreak);
-      } else {
-        setStreak(0);
-        localStorage.setItem(`streak_${user.id}`, "0");
+    (async () => {
+      const profile = await getProfile(user.id);
+      if (profile) {
+        const today = new Date().toISOString().split("T")[0];
+        if (profile.last_checkin === today) {
+          setCheckedIn(true);
+          setStreak(profile.streak_count);
+
+          // Calculate drops that were earned
+          let multiplier = 1;
+          if (profile.streak_count >= 30) multiplier = 3;
+          else if (profile.streak_count >= 7) multiplier = 2;
+          else if (profile.streak_count >= 3) multiplier = 1.5;
+          setDrops(Math.floor(1 * multiplier));
+        } else {
+          // Show current streak for display
+          const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+          setStreak(profile.last_checkin === yesterday ? profile.streak_count : 0);
+        }
       }
-    }
+      setLoading(false);
+    })();
   }, [user]);
 
   const getMultiplier = (s: number) => {
@@ -39,27 +49,27 @@ export default function CheckinBanner() {
     return 1;
   };
 
-  const getDrops = (s: number) => Math.floor(1 * getMultiplier(s));
+  const handleCheckin = async () => {
+    if (!user || checkedIn || checking) return;
+    setChecking(true);
 
-  const handleCheckin = () => {
-    if (!user || checkedIn) return;
-    const today = new Date().toISOString().split("T")[0];
-    const newStreak = streak + 1;
-    const earned = getDrops(newStreak);
-    const currentTotal = parseInt(localStorage.getItem(`totalDrops_${user.id}`) || "0");
+    const result = await doCheckin(user.id);
 
-    localStorage.setItem(`checkin_${user.id}`, today);
-    localStorage.setItem(`streak_${user.id}`, String(newStreak));
-    localStorage.setItem(`totalDrops_${user.id}`, String(currentTotal + earned));
+    if (result.success && !result.alreadyCheckedIn) {
+      setCheckedIn(true);
+      setStreak(result.streak);
+      setDrops(result.drops);
+      setShowReward(true);
+      setTimeout(() => setShowReward(false), 3000);
+    } else if (result.alreadyCheckedIn) {
+      setCheckedIn(true);
+      setStreak(result.streak);
+    }
 
-    setCheckedIn(true);
-    setStreak(newStreak);
-    setDrops(earned);
-    setShowReward(true);
-    setTimeout(() => setShowReward(false), 3000);
+    setChecking(false);
   };
 
-  if (!user) return null;
+  if (!user || loading) return null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-forest-dark via-forest to-forest-dark p-6 sm:p-8">
@@ -106,9 +116,10 @@ export default function CheckinBanner() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={handleCheckin}
-              className="rounded-xl bg-gold px-6 py-3 text-base font-bold text-forest-dark shadow-lg transition-shadow hover:shadow-xl sm:px-8 sm:py-4 sm:text-lg"
+              disabled={checking}
+              className="rounded-xl bg-gold px-6 py-3 text-base font-bold text-forest-dark shadow-lg transition-shadow hover:shadow-xl disabled:opacity-60 sm:px-8 sm:py-4 sm:text-lg"
             >
-              Điểm danh
+              {checking ? "Đang xử lý..." : "Điểm danh"}
             </motion.button>
           )}
         </div>

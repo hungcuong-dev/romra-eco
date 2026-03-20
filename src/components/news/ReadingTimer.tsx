@@ -3,31 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/components/auth/AuthProvider";
+import { addDrops, getReadingState, saveReadingLocal } from "@/lib/drops";
 import Link from "next/link";
 
-const DROP_PER_MINUTE = 1; // 1 giọt mỗi phút
-const MAX_DROPS_PER_DAY = 5; // tối đa 5 giọt/ngày
-
-function getToday() {
-  return new Date().toISOString().split("T")[0];
-}
-
-function getStoredReading(userId: string) {
-  const key = `reading_${userId}`;
-  const raw = localStorage.getItem(key);
-  if (!raw) return { date: getToday(), seconds: 0, dropsEarned: 0 };
-
-  const data = JSON.parse(raw);
-  if (data.date !== getToday()) {
-    return { date: getToday(), seconds: 0, dropsEarned: 0 };
-  }
-  return data;
-}
-
-function saveReading(userId: string, seconds: number, dropsEarned: number) {
-  const key = `reading_${userId}`;
-  localStorage.setItem(key, JSON.stringify({ date: getToday(), seconds, dropsEarned }));
-}
+const DROP_PER_MINUTE = 1;
+const MAX_DROPS_PER_DAY = 5;
 
 export default function ReadingTimer() {
   const { user } = useUser();
@@ -43,18 +23,21 @@ export default function ReadingTimer() {
 
   const isFull = dropsEarned >= MAX_DROPS_PER_DAY;
 
-  // Load từ localStorage
+  // Load from localStorage (seconds tracking stays local for real-time)
   useEffect(() => {
     if (!user) return;
-    const stored = getStoredReading(user.id);
-    setSeconds(stored.seconds);
-    setDropsEarned(stored.dropsEarned || 0);
-    secondsRef.current = stored.seconds;
-    dropsRef.current = stored.dropsEarned || 0;
-    setLoaded(true);
+
+    (async () => {
+      const state = await getReadingState(user.id);
+      setSeconds(state.seconds);
+      setDropsEarned(state.dropsEarned);
+      secondsRef.current = state.seconds;
+      dropsRef.current = state.dropsEarned;
+      setLoaded(true);
+    })();
   }, [user]);
 
-  // Pause khi tab ẩn
+  // Pause when tab hidden
   useEffect(() => {
     const handleVisibility = () => setActive(!document.hidden);
     document.addEventListener("visibilitychange", handleVisibility);
@@ -62,10 +45,10 @@ export default function ReadingTimer() {
   }, []);
 
   const persist = useCallback(() => {
-    if (user) saveReading(user.id, secondsRef.current, dropsRef.current);
+    if (user) saveReadingLocal(user.id, secondsRef.current, dropsRef.current);
   }, [user]);
 
-  // Timer — mỗi 60 giây cộng 1 giọt, dừng khi full
+  // Timer — every 60 seconds add 1 drop to DB
   useEffect(() => {
     if (!user || !loaded || isFull || !active) return;
 
@@ -74,10 +57,10 @@ export default function ReadingTimer() {
         const next = s + 1;
         secondsRef.current = next;
 
-        // Lưu mỗi 5 giây
+        // Save locally every 5 seconds
         if (next % 5 === 0) persist();
 
-        // Mỗi 60 giây = 1 giọt
+        // Every 60 seconds = 1 drop
         const newDrops = Math.min(Math.floor(next / 60), MAX_DROPS_PER_DAY);
         if (newDrops > dropsRef.current) {
           const earned = newDrops - dropsRef.current;
@@ -87,16 +70,10 @@ export default function ReadingTimer() {
           setShowReward(true);
           setTimeout(() => setShowReward(false), 2500);
 
-          // Cộng drops vào tổng
-          const currentTotal = parseInt(localStorage.getItem(`totalDrops_${user.id}`) || "0");
-          localStorage.setItem(`totalDrops_${user.id}`, String(currentTotal + earned));
+          // Save drops to DB
+          addDrops(user.id, earned);
 
-          saveReading(user.id, next, newDrops);
-
-          // Dừng nếu full
-          if (newDrops >= MAX_DROPS_PER_DAY) {
-            setSeconds(next);
-          }
+          saveReadingLocal(user.id, next, newDrops);
         }
 
         return next;
@@ -108,7 +85,7 @@ export default function ReadingTimer() {
     };
   }, [active, user, loaded, isFull, persist]);
 
-  // Lưu khi rời trang
+  // Save on page leave
   useEffect(() => {
     if (!user) return;
     const handleUnload = () => persist();
@@ -124,7 +101,7 @@ export default function ReadingTimer() {
   const secs = seconds % 60;
   const secsToNextDrop = dropsEarned < MAX_DROPS_PER_DAY ? 60 - (seconds % 60) : 0;
 
-  // Chưa đăng nhập
+  // Not logged in
   if (!user) {
     return (
       <div className="fixed bottom-4 left-4 right-4 z-40 mx-auto max-w-md">
