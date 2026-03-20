@@ -9,6 +9,7 @@ import MapFilters from "@/components/map/MapFilters";
 import FieldPanel from "@/components/map/FieldPanel";
 import type { RiceField, FieldStatus, Product } from "@/types";
 import { CDN } from "@/lib/constants";
+import { riceFields } from "@/data/fields";
 
 const MapView = dynamic(() => import("@/components/map/MapView"), {
   ssr: false,
@@ -410,7 +411,8 @@ export default function MapPage() {
     "available",
     "burn_risk",
   ]);
-  const [panelOpen, setPanelOpen] = useState(true);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [panelExpanded, setPanelExpanded] = useState(false);
   const [popupProduct, setPopupProduct] = useState<Product | null>(null);
   const [showContact, setShowContact] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
@@ -423,7 +425,12 @@ export default function MapPage() {
 
   const handleFieldSelect = useCallback((field: RiceField | null) => {
     setSelectedField(field);
-    if (field) setPanelOpen(true);
+    if (field) {
+      setPanelOpen(true);
+      setPanelExpanded(false); // show peek first on mobile
+    } else {
+      setPanelExpanded(false);
+    }
   }, []);
 
   return (
@@ -437,13 +444,34 @@ export default function MapPage() {
             <MapFilters activeFilters={activeFilters} onToggle={handleToggleFilter} />
           </div>
 
-          {/* Mobile panel toggle */}
-          <button
-            onClick={() => setPanelOpen(!panelOpen)}
-            className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-forest px-6 py-2 text-sm font-medium text-white shadow-lg md:hidden"
-          >
-            {panelOpen ? "Ẩn panel" : "Hiện thông tin"}
-          </button>
+          {/* Mobile: show field name chip when panel is closed and field selected */}
+          {!panelOpen && selectedField && (
+            <button
+              onClick={() => { setPanelOpen(true); setPanelExpanded(false); }}
+              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-forest-dark shadow-xl md:hidden"
+            >
+              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: selectedField.status === "collected" ? "#4a6b3a" : selectedField.status === "available" ? "#e8c07d" : "#c0392b" }} />
+              {selectedField.name}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+            </button>
+          )}
+          {/* Mobile: field chips horizontal scroll when no field selected */}
+          {!panelOpen && !selectedField && (
+            <div className="absolute bottom-4 left-0 right-0 z-10 md:hidden">
+              <div className="flex gap-2 overflow-x-auto px-4 pb-1 no-scrollbar">
+                {riceFields.filter(f => activeFilters.includes(f.status)).map((field) => (
+                  <button
+                    key={field.id}
+                    onClick={() => handleFieldSelect(field)}
+                    className="flex shrink-0 items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-forest-dark shadow-lg"
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: field.status === "collected" ? "#4a6b3a" : field.status === "available" ? "#e8c07d" : "#c0392b" }} />
+                    {field.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <MapView
             activeFilters={activeFilters}
@@ -453,12 +481,9 @@ export default function MapPage() {
           />
         </div>
 
-        {/* Panel */}
-        <div
-          className={`${
-            panelOpen ? "translate-y-0" : "translate-y-full md:translate-y-0"
-          } absolute bottom-0 left-0 right-0 z-20 h-[60vh] border-t border-gray-200 transition-transform md:relative md:h-full md:w-[380px] md:border-l md:border-t-0`}
-        >
+        {/* Panel — Desktop: sidebar, Mobile: bottom sheet */}
+        {/* Desktop sidebar */}
+        <div className="hidden md:block md:h-full md:w-[380px] md:border-l md:border-gray-200">
           <FieldPanel
             selectedField={selectedField}
             onFieldSelect={handleFieldSelect}
@@ -466,6 +491,77 @@ export default function MapPage() {
             onContactClick={() => setShowContact(true)}
             onGalleryClick={() => setShowGallery(true)}
           />
+        </div>
+
+        {/* Mobile bottom sheet */}
+        <div
+          className={`fixed bottom-0 left-0 right-0 z-20 transition-transform duration-300 ease-out md:hidden ${
+            panelOpen ? "translate-y-0" : "translate-y-full"
+          }`}
+          style={{ height: panelExpanded ? "75vh" : "auto", maxHeight: "85vh" }}
+        >
+          {/* Handle bar + header */}
+          <div className="rounded-t-2xl border-t border-gray-200 bg-white px-4 pt-3 pb-0 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+            {/* Drag handle */}
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-gray-300" />
+
+            {/* Peek header — always visible */}
+            <div className="flex items-center justify-between pb-3">
+              <div className="flex items-center gap-2">
+                {selectedField ? (
+                  <>
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: selectedField.status === "collected" ? "#4a6b3a" : selectedField.status === "available" ? "#e8c07d" : "#c0392b" }} />
+                    <h3 className="text-base font-bold text-forest-dark">{selectedField.name}</h3>
+                  </>
+                ) : (
+                  <h3 className="text-base font-bold text-forest-dark">Cánh đồng</h3>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {!panelExpanded && (
+                  <button
+                    onClick={() => setPanelExpanded(true)}
+                    className="rounded-full bg-cream px-3 py-1.5 text-xs font-medium text-forest-dark"
+                  >
+                    Xem thêm
+                  </button>
+                )}
+                <button
+                  onClick={() => { setPanelOpen(false); setPanelExpanded(false); }}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick info — peek mode */}
+            {selectedField && !panelExpanded && (
+              <div className="flex items-center gap-4 border-t border-gray-100 py-3 text-sm text-gray-500">
+                <span>{selectedField.farmer}</span>
+                <span>·</span>
+                <span className="font-semibold text-forest">{selectedField.straw_kg.toLocaleString()} kg</span>
+                <span>·</span>
+                <span>{selectedField.district}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Expanded content */}
+          {panelExpanded && (
+            <div className="overflow-y-auto bg-white" style={{ height: "calc(75vh - 100px)" }}>
+              <FieldPanel
+                selectedField={selectedField}
+                onFieldSelect={(field) => {
+                  handleFieldSelect(field);
+                  if (!field) setPanelExpanded(true); // show list expanded
+                }}
+                onProductClick={(product) => setPopupProduct(product)}
+                onContactClick={() => setShowContact(true)}
+                onGalleryClick={() => setShowGallery(true)}
+              />
+            </div>
+          )}
         </div>
       </div>
 

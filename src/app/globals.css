@@ -58,3 +58,12 @@ h1, h2, h3 {
 .marker-pulse {
   animation: pulse 2s infinite;
 }
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

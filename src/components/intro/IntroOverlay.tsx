@@ -167,7 +167,7 @@ export default function IntroOverlay({ onComplete }: IntroOverlayProps) {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 2.8, duration: 0.8 }}
-          className="mt-5 text-center text-base font-light tracking-[0.2em] text-white/50 md:text-lg"
+          className="mt-5 text-center text-xl font-medium tracking-[0.12em] text-white/80 md:text-2xl"
         >
           Bao bì sinh học từ rơm rạ
         </motion.p>
@@ -177,7 +177,7 @@ export default function IntroOverlay({ onComplete }: IntroOverlayProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 3.3, duration: 0.8 }}
-          className="mt-2 text-center text-xs tracking-[0.15em] text-gold/40 md:text-sm"
+          className="mt-3 text-center text-base tracking-[0.12em] text-gold/70 md:text-lg"
         >
           Lan niềm vui · Lan lối sống xanh
         </motion.p>
