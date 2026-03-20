@@ -67,6 +67,9 @@ export default function LandingHero() {
           <CTAButton href="/products" variant="outline">
             Xem sản phẩm
           </CTAButton>
+          <CTAButton href="/news" variant="outline">
+            Bảng tin
+          </CTAButton>
         </motion.div>
 
         {/* Stats */}
