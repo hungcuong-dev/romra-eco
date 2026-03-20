@@ -175,6 +175,7 @@ export default function CampaignDetailModal({
                       <img
                         src={article.cover_image}
                         alt={article.title}
+                        referrerPolicy="no-referrer"
                         className="h-12 w-12 shrink-0 rounded-lg object-cover"
                       />
                       <div className="min-w-0 flex-1">

@@ -39,6 +39,7 @@ export default function ArticleCard({
           <img
             src={article.cover_image}
             alt={article.title}
+            referrerPolicy="no-referrer"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
 
