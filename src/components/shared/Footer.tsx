@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FaPhone, FaEnvelope, FaFacebook } from "react-icons/fa";
-import { CONTACT } from "@/lib/constants";
+import { CONTACT, CDN } from "@/lib/constants";
 
 export default function Footer() {
   return (
@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-6">
         <div className="flex items-center gap-5">
           <Image
-            src="/images/logo.png"
+            src={`${CDN}/images/logo.png`}
             alt="Rơm Rả Eco Logo"
             width={60}
             height={60}

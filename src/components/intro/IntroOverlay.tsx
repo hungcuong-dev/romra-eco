@@ -3,6 +3,7 @@
 import { useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { CDN } from "@/lib/constants";
 
 interface IntroOverlayProps {
   onComplete: () => void;
@@ -106,7 +107,7 @@ export default function IntroOverlay({ onComplete }: IntroOverlayProps) {
             }}
           />
           <Image
-            src="/images/logo.png"
+            src={`${CDN}/images/logo.png`}
             alt="Rơm Rả Eco"
             width={110}
             height={110}

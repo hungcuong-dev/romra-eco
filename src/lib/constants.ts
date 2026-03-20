@@ -1,5 +1,7 @@
 import type { FieldStatus } from "@/types";
 
+export const CDN = "https://pub-861836c4cda7439e918e1357065cdc65.r2.dev";
+
 export const CONTACT = {
   phone: "0934814565",
   phoneName: "Ms. Thanh Ngân",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { CDN } from "@/lib/constants";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -36,7 +37,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.03]">
           <Image
-            src="/images/logo.png"
+            src={`${CDN}/images/logo.png`}
             alt="Rơm Rả Eco Logo"
             width={42}
             height={42}

@@ -8,6 +8,7 @@ import Header from "@/components/shared/Header";
 import MapFilters from "@/components/map/MapFilters";
 import FieldPanel from "@/components/map/FieldPanel";
 import type { RiceField, FieldStatus, Product } from "@/types";
+import { CDN } from "@/lib/constants";
 
 const MapView = dynamic(() => import("@/components/map/MapView"), {
   ssr: false,
@@ -294,9 +295,9 @@ function ProductPopup({
 
 /* ── Gallery Popup ── */
 const FIELD_IMAGES = [
-  "/images/canhDong.jpeg",
-  "/images/canhDong.jpeg",
-  "/images/canhDong.jpeg",
+  `${CDN}/images/canhDong.jpeg`,
+  `${CDN}/images/canhDong.jpeg`,
+  `${CDN}/images/canhDong.jpeg`,
 ];
 
 function GalleryPopup({

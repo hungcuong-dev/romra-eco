@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { CDN } from "@/lib/constants";
 
 export default function ImpactSection() {
   return (
@@ -18,7 +19,7 @@ export default function ImpactSection() {
           >
             <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
               <Image
-                src="/images/canhDong.jpeg"
+                src={`${CDN}/images/canhDong.jpeg`}
                 alt="Hỗ trợ cộng đồng"
                 fill
                 className="object-cover"

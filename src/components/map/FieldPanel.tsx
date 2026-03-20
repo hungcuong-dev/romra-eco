@@ -8,6 +8,7 @@ import { STATUS_LABELS, STATUS_COLORS, STATUS_ICONS } from "@/lib/constants";
 import { products } from "@/data/products";
 import { riceFields } from "@/data/fields";
 import ImpactCounter from "./ImpactCounter";
+import { CDN } from "@/lib/constants";
 
 interface FieldPanelProps {
   selectedField: RiceField | null;
@@ -78,7 +79,7 @@ export default function FieldPanel({
             >
               <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
                 <Image
-                  src="/images/canhDong.jpeg"
+                  src={`${CDN}/images/canhDong.jpeg`}
                   alt="Ảnh cánh đồng"
                   fill
                   className="object-cover"

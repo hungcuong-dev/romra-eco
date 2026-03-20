@@ -1,4 +1,5 @@
 import type { Product } from "@/types";
+import { CDN } from "@/lib/constants";
 
 export const products: Product[] = [
   {
@@ -7,7 +8,7 @@ export const products: Product[] = [
     shortTitle: "Phong bì sinh học",
     description:
       "Giải pháp phong bì thân thiện cho môi trường, độc đáo cho ngành thiết kế in ấn, mùi hương dễ chịu gợi kí ức tuổi thơ.",
-    image: "/images/products/food-packaging.png",
+    image: `${CDN}/images/products/food-packaging.png`,
     decompose: "Phân huỷ hoàn toàn trong môi trường tự nhiên.",
     size: "11×22 cm",
     weight: "10-12g",
@@ -25,7 +26,7 @@ export const products: Product[] = [
     shortTitle: "Túi xách sinh học",
     description:
       "Trở thành phụ kiện thời trang độc lạ, giải pháp mới thay đổi thói quen tiêu dùng để môi trường thêm xanh.",
-    image: "/images/products/shopping-bag.png",
+    image: `${CDN}/images/products/shopping-bag.png`,
     decompose: "Phân huỷ hoàn toàn trong môi trường tự nhiên.",
     size: "Nhỏ: 15×25 cm, Trung: 20×30 cm",
     weight: "Nhỏ: 11-13g, Trung: 32-35g",
@@ -45,7 +46,7 @@ export const products: Product[] = [
     shortTitle: "Giấy A4 sinh học",
     description:
       "Giải pháp giấy thân thiện cho môi trường, độc đáo trong trang trí, thiết kế, mùi hương dễ chịu gợi kí ức tuổi thơ.",
-    image: "/images/products/industrial-packaging.png",
+    image: `${CDN}/images/products/industrial-packaging.png`,
     decompose: "Phân huỷ hoàn toàn trong môi trường tự nhiên.",
     size: "A4",
     weight: "7-9g",
@@ -65,7 +66,7 @@ export const products: Product[] = [
     shortTitle: "Tệp tài liệu sinh học",
     description:
       "Giải pháp tệp hồ sơ thân thiện cho môi trường, độc đáo cho học sinh, nhân viên văn phòng, mùi hương dễ chịu gợi kí ức tuổi thơ.",
-    image: "/images/products/cosmetic-packaging.png",
+    image: `${CDN}/images/products/cosmetic-packaging.png`,
     decompose: "Phân huỷ hoàn toàn trong môi trường tự nhiên.",
     size: "Size A4: 22×31 cm, Size A5: 15×22 cm",
     weight: "A4: 27-29g, A5: 18-20g",
@@ -84,7 +85,7 @@ export const products: Product[] = [
     shortTitle: "Bao bì nghệ thuật",
     description:
       "Trở thành phụ kiện thời trang độc lạ mang dấu ấn cá nhân, giải pháp mới thay đổi thói quen tiêu dùng để môi trường thêm xanh.",
-    image: "/images/products/pharmaceutical-packaging.jpg",
+    image: `${CDN}/images/products/pharmaceutical-packaging.jpg`,
     decompose: "Phân huỷ hoàn toàn trong môi trường tự nhiên.",
     size: "Nhỏ: 15×25 cm, Trung: 20×30 cm",
     weight: "Nhỏ: 11-13g, Trung: 32-35g",

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import CTAButton from "@/components/shared/CTAButton";
+import { CDN } from "@/lib/constants";
 
 export default function LandingHero() {
   return (
@@ -10,7 +11,7 @@ export default function LandingHero() {
       {/* Background */}
       <div className="absolute inset-0">
         <Image
-          src="/images/background.png"
+          src={`${CDN}/images/background.png`}
           alt="Cánh đồng lúa"
           fill
           className="object-cover"
@@ -27,7 +28,7 @@ export default function LandingHero() {
           transition={{ duration: 0.6 }}
         >
           <Image
-            src="/images/logo.png"
+            src={`${CDN}/images/logo.png`}
             alt="Rơm Rả Eco"
             width={100}
             height={100}
