@@ -19,7 +19,7 @@ export default function ImpactSection() {
           >
             <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
               <Image
-                src={`${CDN}/images/canhDong.jpeg`}
+                src={`${CDN}/images/tacDongXaHoi.PNG`}
                 alt="Hỗ trợ cộng đồng"
                 fill
                 className="object-cover"
