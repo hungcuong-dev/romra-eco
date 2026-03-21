@@ -295,23 +295,19 @@ function ProductPopup({
 }
 
 /* ── Gallery Popup ── */
-const FIELD_IMAGES = [
-  `${CDN}/images/canhDong.jpeg`,
-  `${CDN}/images/canhDong.jpeg`,
-  `${CDN}/images/canhDong.jpeg`,
-];
-
 function GalleryPopup({
   fieldName,
+  images,
   onClose,
 }: {
   fieldName: string;
+  images: string[];
   onClose: () => void;
 }) {
   const [current, setCurrent] = useState(0);
 
-  const goPrev = () => setCurrent((c) => (c === 0 ? FIELD_IMAGES.length - 1 : c - 1));
-  const goNext = () => setCurrent((c) => (c === FIELD_IMAGES.length - 1 ? 0 : c + 1));
+  const goPrev = () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1));
+  const goNext = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
 
   return (
     <motion.div
@@ -333,7 +329,7 @@ function GalleryPopup({
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-bold text-white">{fieldName}</h3>
           <span className="text-sm text-white/50">
-            {current + 1} / {FIELD_IMAGES.length}
+            {current + 1} / {images.length}
           </span>
         </div>
 
@@ -349,7 +345,7 @@ function GalleryPopup({
               transition={{ duration: 0.3 }}
             >
               <Image
-                src={FIELD_IMAGES[current]}
+                src={images[current]}
                 alt={`${fieldName} - ảnh ${current + 1}`}
                 fill
                 className="object-cover"
@@ -378,7 +374,7 @@ function GalleryPopup({
 
         {/* Thumbnails */}
         <div className="mt-4 flex justify-center gap-2">
-          {FIELD_IMAGES.map((src, i) => (
+          {images.map((src, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
@@ -592,6 +588,7 @@ export default function MapPage() {
         {showGallery && selectedField && (
           <GalleryPopup
             fieldName={selectedField.name}
+            images={selectedField.images}
             onClose={() => setShowGallery(false)}
           />
         )}
