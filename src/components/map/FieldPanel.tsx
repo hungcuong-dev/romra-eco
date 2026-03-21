@@ -69,6 +69,10 @@ export default function FieldPanel({
                 <span className="font-medium text-forest-dark">Mùa gặt:</span>{" "}
                 {selectedField.harvestMonth}
               </p>
+              <p>
+                <span className="font-medium text-forest-dark">Diện tích:</span>{" "}
+                {selectedField.area_ha} ha
+              </p>
               <p>{selectedField.description}</p>
             </div>
 
@@ -79,7 +83,7 @@ export default function FieldPanel({
             >
               <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
                 <Image
-                  src={`${CDN}/images/canhDong.jpeg`}
+                  src={selectedField.images[0] || `${CDN}/images/canhDong.jpeg`}
                   alt="Ảnh cánh đồng"
                   fill
                   className="object-cover"
@@ -103,7 +107,7 @@ export default function FieldPanel({
               <div className="h-3 overflow-hidden rounded-full bg-cream">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((selectedField.straw_kg / 3500) * 100, 100)}%` }}
+                  animate={{ width: `${Math.min((selectedField.straw_kg / 5000) * 100, 100)}%` }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                   className="h-full rounded-full bg-forest"
                 />

@@ -12,6 +12,7 @@ export interface RiceField {
   description: string;
   district: string;
   harvestMonth: string;
+  area_ha: number;
   linkedProductIds: string[];
 }
 
