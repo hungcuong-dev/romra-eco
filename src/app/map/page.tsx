@@ -405,7 +405,6 @@ export default function MapPage() {
   const [activeFilters, setActiveFilters] = useState<FieldStatus[]>([
     "collected",
     "available",
-    "burn_risk",
   ]);
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(false);

@@ -8,7 +8,7 @@ interface MapFiltersProps {
   onToggle: (status: FieldStatus) => void;
 }
 
-const statuses: FieldStatus[] = ["collected", "available", "burn_risk"];
+const statuses: FieldStatus[] = ["collected", "available"];
 
 export default function MapFilters({ activeFilters, onToggle }: MapFiltersProps) {
   return (
