@@ -179,7 +179,7 @@ export default function IntroOverlay({ onComplete }: IntroOverlayProps) {
           transition={{ delay: 3.3, duration: 0.8 }}
           className="mt-3 text-center text-base tracking-[0.12em] text-gold/70 md:text-lg"
         >
-          Lan niềm vui · Lan lối sống xanh
+          Rơm rả lan niềm vui - Rơm rạ lan lối sống xanh
         </motion.p>
       </div>
 

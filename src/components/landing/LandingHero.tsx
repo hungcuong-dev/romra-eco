@@ -80,9 +80,9 @@ export default function LandingHero() {
           className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3"
         >
           {[
-            { value: "47 triệu tấn", label: "rơm rạ mỗi năm tại VN" },
-            { value: "3-6 tháng", label: "phân hủy hoàn toàn" },
-            { value: "0%", label: "nhựa & hóa chất độc hại" },
+            { value: "47 triệu tấn", label: "Rơm rạ mỗi năm tại Việt Nam" },
+            { value: "3-6 tháng", label: "Phân hủy hoàn toàn" },
+            { value: "0%", label: "Nhựa & hóa chất độc hại" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <p className="text-2xl font-bold text-gold">{stat.value}</p>
