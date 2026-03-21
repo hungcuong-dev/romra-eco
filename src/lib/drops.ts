@@ -162,11 +162,8 @@ export async function contributeToCampaigns(dropsAmount: number) {
 
   if (!campaigns || campaigns.length === 0) return;
 
-  // Split drops evenly across active campaigns
-  const dropsPerCampaign = dropsAmount / campaigns.length;
-
   for (const campaign of campaigns) {
-    const addVnd = Math.floor(dropsPerCampaign * campaign.drop_value_vnd);
+    const addVnd = dropsAmount * campaign.drop_value_vnd;
     const newAmount = Math.min(campaign.current_amount + addVnd, campaign.target_amount);
 
     await supabase()
