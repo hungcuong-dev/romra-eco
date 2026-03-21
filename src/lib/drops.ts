@@ -36,7 +36,6 @@ export async function getProfile(userId: string): Promise<UserProfile | null> {
 }
 
 export async function addDrops(userId: string, amount: number): Promise<number> {
-  // Use RPC or read-then-update
   const profile = await getProfile(userId);
   if (!profile) return 0;
 
@@ -45,6 +44,9 @@ export async function addDrops(userId: string, amount: number): Promise<number> 
     .from("user_profiles")
     .update({ total_drops: newTotal })
     .eq("id", userId);
+
+  // Also contribute to active campaigns
+  await contributeToCampaigns(amount);
 
   return newTotal;
 }
@@ -92,6 +94,9 @@ export async function doCheckin(userId: string): Promise<{
     })
     .eq("id", userId);
 
+  // Contribute checkin drops to campaigns
+  await contributeToCampaigns(dropsEarned);
+
   return {
     success: true,
     drops: dropsEarned,
@@ -123,4 +128,50 @@ export async function getReadingState(userId: string): Promise<{
 export function saveReadingLocal(userId: string, seconds: number, dropsEarned: number) {
   const today = new Date().toISOString().split("T")[0];
   localStorage.setItem(`reading_${userId}`, JSON.stringify({ date: today, seconds, dropsEarned }));
+}
+
+// ── Campaigns ──
+
+export interface CampaignRow {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  target_amount: number;
+  current_amount: number;
+  cover_image: string;
+  drop_value_vnd: number;
+  status: "active" | "completed";
+}
+
+export async function getCampaigns(): Promise<CampaignRow[]> {
+  const { data } = await supabase()
+    .from("campaigns")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  return (data || []) as CampaignRow[];
+}
+
+/** Add drops contribution to ALL active campaigns */
+export async function contributeToCampaigns(dropsAmount: number) {
+  const { data: campaigns } = await supabase()
+    .from("campaigns")
+    .select("id, current_amount, target_amount, drop_value_vnd")
+    .eq("status", "active");
+
+  if (!campaigns || campaigns.length === 0) return;
+
+  // Split drops evenly across active campaigns
+  const dropsPerCampaign = dropsAmount / campaigns.length;
+
+  for (const campaign of campaigns) {
+    const addVnd = Math.floor(dropsPerCampaign * campaign.drop_value_vnd);
+    const newAmount = Math.min(campaign.current_amount + addVnd, campaign.target_amount);
+
+    await supabase()
+      .from("campaigns")
+      .update({ current_amount: newAmount })
+      .eq("id", campaign.id);
+  }
 }

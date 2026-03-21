@@ -16,17 +16,14 @@ export const MAP_ZOOM = 10;
 export const STATUS_COLORS: Record<FieldStatus, string> = {
   collected: "#4a6b3a",
   available: "#e8c07d",
-  burn_risk: "#c0392b",
 };
 
 export const STATUS_LABELS: Record<FieldStatus, string> = {
   collected: "Đã thu gom",
   available: "Sẵn sàng",
-  burn_risk: "Nguy cơ đốt",
 };
 
 export const STATUS_ICONS: Record<FieldStatus, string> = {
   collected: "🟢",
   available: "🟡",
-  burn_risk: "🔴",
 };

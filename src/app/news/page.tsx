@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/shared/Header";
@@ -13,15 +13,30 @@ import ArticleCard from "@/components/news/ArticleCard";
 import CheckinBanner from "@/components/news/CheckinBanner";
 import DropsBubble from "@/components/news/DropsBubble";
 import { useUser } from "@/components/auth/AuthProvider";
-import { campaigns, articles } from "@/data/campaigns";
+import { getCampaigns, type CampaignRow } from "@/lib/drops";
+import { articles } from "@/data/campaigns";
 import type { Campaign } from "@/types";
 
 export default function NewsPage() {
   const { user, loading } = useUser();
   const [dismissedWarning, setDismissedWarning] = useState(false);
+  const [campaigns, setCampaigns] = useState<CampaignRow[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [donateCampaign, setDonateCampaign] = useState<Campaign | null>(null);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
+
+  // Fetch campaigns from DB
+  const loadCampaigns = useCallback(async () => {
+    const data = await getCampaigns();
+    setCampaigns(data);
+  }, []);
+
+  useEffect(() => {
+    loadCampaigns();
+    // Refresh every 30 seconds to see live updates
+    const interval = setInterval(loadCampaigns, 30000);
+    return () => clearInterval(interval);
+  }, [loadCampaigns]);
 
   const showWarning = !loading && !user && !dismissedWarning;
 

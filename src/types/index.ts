@@ -1,4 +1,4 @@
-export type FieldStatus = "available" | "collected" | "burn_risk";
+export type FieldStatus = "available" | "collected";
 
 export interface RiceField {
   id: string;
