@@ -21,7 +21,7 @@ export default function LandingHero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center gap-8 px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center gap-8 px-6 pb-20 pt-16 text-center sm:pb-10 sm:pt-0">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -40,7 +40,7 @@ export default function LandingHero() {
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="max-w-3xl text-3xl font-bold leading-tight text-white md:text-5xl"
+          className="max-w-3xl text-xl font-bold leading-tight text-white sm:text-3xl md:text-5xl"
         >
           RƠM RẢ LAN NIỀM VUI
           <br />
